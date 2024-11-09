@@ -431,6 +431,16 @@ document.getElementById('logout-button').addEventListener('click', () => {
     showSection('login');
 });
 
+        // Profile, Earnings, Referral, Withdrawal, Settings, Customer Care, About Us links
+document.getElementById('profile-link').addEventListener('click', () => showSection('profile'));
+document.getElementById('earnings-link').addEventListener('click', () => showSection('earnings-section'));
+document.getElementById('referral-link').addEventListener('click', () => showSection('referral'));
+document.getElementById('withdrawal-link').addEventListener('click', () => showSection('withdrawal'));
+document.getElementById('customer-care-link').addEventListener('click', () => showSection('customer-care'));
+document.getElementById('settings-link').addEventListener('click', () => showSection('settings'));
+document.getElementById('about-us-link').addEventListener('click', () => showSection('about-us'));
+
+
 // Register Event Listener
 document.getElementById('register-form').addEventListener('submit', function(e) {
     e.preventDefault();
