@@ -35,13 +35,14 @@
     <style>
       /* Basic styles for visibility and layout */
 body {
-    font-size: 16px; /* Adjust to your preferred size */
+    
     background: linear-gradient(135deg, #d3a2f6, #1a237e, #ff4d41); /* Light purple, dark blue, watermelon gradient */
     font-family: 'Roboto', sans-serif; /* Modern sans-serif font */
     margin: 0;
     padding: 20px;
     color: #fff; /* White text for the body */
     font-weight: normal; /* Lighter font weight */
+    font-size: 16px; /* Normal font size for body text */
 }
 
 /* Section display and layout */
@@ -81,13 +82,13 @@ header {
 }
 
 header .logo {
-    font-size: 32px; /* Larger logo font */
+    font-size: 24px; /* Reduced logo font size for a more balanced look */
     font-weight: bold;
     color: #fff; /* White text for the logo */
 }
 
 header .menu-icon {
-    font-size: 40px;
+    font-size: 30px; /* Reduced font size of the menu icon */
     cursor: pointer;
     color: #fff; /* White icon */
     padding: 10px;
@@ -127,7 +128,7 @@ header .menu-icon:hover {
     padding: 12px 20px;
     display: block;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 14px; /* Slightly smaller font size for dropdown links */
     border-bottom: 1px solid #ddd; /* Add a white line separating items */
 }
 
@@ -140,11 +141,12 @@ button {
     background-color: #ff4081; /* Pink background for the button */
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 10px 20px; /* Adjusted padding for a more normal button size */
     cursor: pointer;
     font-weight: bold;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    font-size: 14px; /* Normalized button text size */
 }
 
 button:hover {
@@ -154,12 +156,12 @@ button:hover {
 /* Form Elements */
 input[type="text"], input[type="email"], input[type="password"], input[type="number"], select {
     width: 100%;
-    padding: 12px;
+    padding: 10px; /* Reduced padding for form elements */
     margin-bottom: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
-    font-size: 16px;
+    font-size: 14px; /* Reduced font size for form elements */
 }
 
 input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
@@ -169,8 +171,8 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 
 /* WhatsApp Icon */
 .whatsapp-icon {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background-color: #25d366; /* WhatsApp green */
     display: flex;
@@ -182,7 +184,7 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 /* Purple logo styling */
 .purple-logo {
     color: #6c63ff; /* Modern purple color */
-    font-size: 36px;
+    font-size: 32px; /* Adjusted purple logo size */
     font-weight: bold;
 }
 
@@ -198,6 +200,7 @@ section h2 {
     color: #6c63ff;
     text-align: center;
     margin-bottom: 24px;
+    font-size: 24px; /* Reduced size of section headings */
 }
 
 #featured {
@@ -225,7 +228,7 @@ footer .content {
 }
 
 footer .logo {
-    font-size: 28px;
+    font-size: 22px; /* Adjusted footer logo size */
     font-weight: bold;
 }
 
@@ -247,6 +250,7 @@ footer .copyright {
 
     header .logo {
         margin-bottom: 20px;
+        font-size: 20px; /* Adjusted logo size for mobile */
     }
 
     header .menu-icon {
@@ -279,17 +283,18 @@ footer .copyright {
 
 @media (max-width: 480px) {
     header .logo {
-        font-size: 24px;
+        font-size: 18px; /* Further adjust for very small screens */
     }
 
     button {
         width: 100%;
-        padding: 15px 0;
+        padding: 12px 0;
+        font-size: 14px; /* Ensure button text remains small on mobile */
     }
 
     .whatsapp-icon {
-        width: 45px;
-        height: 45px;
+        width: 40px;
+        height: 40px; /* Smaller WhatsApp icon for smaller screens */
     }
 }
 
