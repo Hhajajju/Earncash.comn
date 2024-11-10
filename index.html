@@ -1,48 +1,85 @@
-a<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earncash</title>
 
-       <!-- Firebase SDK -->
+    <!-- Firebase SDK -->
     <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD4sNBSwJEDnjlD938YJ9f43-Sv-il-PBE",
+            authDomain: "earncash-9dbb5.firebaseapp.com",
+            projectId: "earncash-9dbb5",
+            storageBucket: "earncash-9dbb5.firebasestorage.app",
+            messagingSenderId: "277935191297",
+            appId: "1:277935191297:web:c59f072773acb70c7d5700",
+            measurementId: "G-0CWQW3MKM5"
+        };
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyD4sNBSwJEDnjlD938YJ9f43-Sv-il-PBE",
-    authDomain: "earncash-9dbb5.firebaseapp.com",
-    projectId: "earncash-9dbb5",
-    storageBucket: "earncash-9dbb5.firebasestorage.app",
-    messagingSenderId: "277935191297",
-    appId: "1:277935191297:web:c59f072773acb70c7d5700",
-    measurementId: "G-0CWQW3MKM5"
-  };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        // Firebase Auth and Firestore setup
+        const auth = getAuth();
+        const db = getFirestore(app);
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-      
-    </script>
-    <style>
-      /* Basic styles for visibility and layout */
+        // Function to register user
+        async function registerUser(email, password) {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Store user data in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    email: user.email,
+                    createdAt: new Date()
+                });
+
+                console.log("User registered and data saved in Firestore!");
+            } catch (error) {
+                console.error("Error registering user: ", error);
+            }
+        }
+
+        // Function to login user
+        async function loginUser(email, password) {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                console.log("User logged in: ", user.email);
+            } catch (error) {
+                console.error("Error logging in: ", error);
+            }
+        }
+
+        // Example: Register a user
+        registerUser('testuser@example.com', 'password123');
+        // Example: Login a user
+        // loginUser('testuser@example.com', 'password123');
+        
+        </script>
+    
+</style>
+    /* Basic styles for visibility and layout */
 body {
-    background-color: #f0f4f8; /* Soft light background */
-    font-family: 'Roboto', sans-serif; /* Modern sans-serif font */
+    
+background-image: url('https://images.app.goo.gl/sXXuDACovqLEeH6W9');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 100vh;
     margin: 0;
-    padding: 20px;
-    color: #333; /* Darker text color for better readability */
-    font-weight: normal; /* Lighter font weight */
-    font-size: 16px; /*set normal text size for body */
 }
-     
 /* Section display and layout */
 .form-section, .dashboard {
     display: none; /* Initially hide sections */
@@ -60,14 +97,15 @@ header {
     padding: 20px 0;
     background: linear-gradient(135deg, #6c63ff, #00bcd4); /* Gradient background */
     border-bottom: 2px solid #e0e0e0; /* Light border at the bottom */
-       position: relative; /* Ensures menu icon can be placed in the top-right corner */
+    position: relative; /* Ensures menu icon can be placed in the top-right corner */
 }
 
 header .logo {
     font-size: 32px; /* Larger logo font */
     font-weight: bold;
     color: #fff; /* White text for the logo */
-  }  
+}
+
 header .menu-icon {
     font-size: 40px;
     cursor: pointer;
@@ -111,8 +149,6 @@ header .menu-icon:hover {
     text-decoration: none;
     font-size: 16px;
     border-bottom: 1px solid #ddd; /* Add a white line separating items */
-}
-
 }
 
 .dropdown-menu a:hover {
@@ -169,28 +205,32 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
     font-size: 36px;
     font-weight: bold;
 }
-input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
-    border-color: #00bcd4;
-    outline: none;
+
+/* Featured Section */
+section {
+    padding: 60px 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* WhatsApp Icon */
-.whatsapp-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #25d366; /* WhatsApp green */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+section h2 {
+    color: #6c63ff;
+    text-align: center;
+    margin-bottom: 24px;
 }
 
-/* Purple logo styling */
-.purple-logo {
-    color: #6c63ff; /* Modern purple color */
-    font-size: 36px;
-    font-weight: bold;
+#featured {
+    background-color: #f7f7f7;
+    padding: 40px 20px;
+    border-radius: 12px;
+}
+
+/* Footer */
+footer {
+    background-color: #212121;
+    color: #fff;
+    padding: 40px 0;
 }
 
 footer a {
@@ -229,7 +269,7 @@ footer .copyright {
         margin-bottom: 20px;
     }
 
-header .menu-icon {
+    header .menu-icon {
         display: block;
         margin-top: 20px;
     }
@@ -272,7 +312,7 @@ header .menu-icon {
         height: 45px;
     }
 }
-</style>
+
 </head>
 <body>
 <div class="container">
@@ -416,7 +456,29 @@ header .menu-icon {
    
       <div id="about-us" class="form-section">
             <h2>About Us</h2>
-            <p>At EarnCash, we believe that earning money should be fun and accessible for everyone. Our platform offers a unique way for users to make cash by watching entertaining videos and referring friends. Join us today and discover how simple it is to earn cash while enjoying your favorite content!</p>
+            <p>
+Welcome to EarnCash, the app that gives you the opportunity to earn money by doing what you already do every day – watching ads and referring friends! At EarnCash, we believe in making earning simple, accessible, and fun for everyone. Whether you're looking for a way to make some extra cash in your spare time or seeking a more flexible way to earn from home, we’ve created a platform that works for you.
+
+### How It Works
+
+EarnCash offers two main ways for you to start earning:
+
+1. **Watch Ads and Get Paid**  
+   Simply watch short video ads from various brands and advertisers. For every ad you watch, you earn rewards that can be converted into cash or gift cards. It's that easy – no special skills required!
+
+2. **Refer Friends and Earn Even More**  
+   Share EarnCash with your friends, family, and network. When they sign up and start watching ads, you get rewarded with bonus earnings. The more friends you refer, the more you can earn!
+
+### Why Choose EarnCash?
+
+- **Easy to Use**: The app is designed to be user-friendly, making it simple to get started and earn money quickly.
+- **Flexible Earning**: Whether you have just a few minutes or a few hours, you can earn on your schedule. No need for full-time commitments!
+- **Reward Variety**: You can choose to withdraw your earning via crypto of your choice.
+### Our Vision
+
+Our goal is to provide everyone with an opportunity to make money on their own terms. EarnCash is committed to providing a legitimate and trustworthy platform for people to earn through everyday activities like watching videos and referring others. We aim to create a community where users can maximize their earning potential while enjoying a seamless, rewarding experience.
+
+Join us today, and start earning while you watch your favorite ads! </p>
             <button id="back-to-main-about">Back to Main</button>
     </div>
 
