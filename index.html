@@ -7,30 +7,29 @@ a<!DOCTYPE html>
 
        <!-- Firebase SDK -->
     <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-      import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-      import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-      
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyD4sNBSwJEDnjlD938YJ9f43-Sv-il-PBE",
-        authDomain: "earncash-9dbb5.firebaseapp.com",
-        projectId: "earncash-9dbb5",
-        storageBucket: "earncash-9dbb5.firebasestorage.app",
-        messagingSenderId: "277935191297",
-        appId: "1:277935191297:web:c59f072773acb70c7d5700",
-        measurementId: "G-0CWQW3MKM5"
-      };
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-      const storage = getStorage(app);
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyD4sNBSwJEDnjlD938YJ9f43-Sv-il-PBE",
+    authDomain: "earncash-9dbb5.firebaseapp.com",
+    projectId: "earncash-9dbb5",
+    storageBucket: "earncash-9dbb5.firebasestorage.app",
+    messagingSenderId: "277935191297",
+    appId: "1:277935191297:web:c59f072773acb70c7d5700",
+    measurementId: "G-0CWQW3MKM5"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+      
     </script>
     <style>
       /* Basic styles for visibility and layout */
@@ -60,20 +59,14 @@ header {
     padding: 20px 0;
     background: linear-gradient(135deg, #6c63ff, #00bcd4); /* Gradient background */
     border-bottom: 2px solid #e0e0e0; /* Light border at the bottom */
-    position: relative; /* Ensures menu icon can be placed in the top-right corner */
+       position: relative; /* Ensures menu icon can be placed in the top-right corner */
 }
 
 header .logo {
     font-size: 32px; /* Larger logo font */
     font-weight: bold;
     color: #fff; /* White text for the logo */
-}
-background-image: url
-background-size: contain; /* Ensure the image fits within the logo area */
-    background-repeat: no-repeat; /* Don't repeat the image */
-    background-position: center; /*center the image */
-    height: 50px; /* set height for the logo (adjust as needed) */
-    width: 150px; /*set width for the logo(adjust as needed) */
+  }  
 header .menu-icon {
     font-size: 40px;
     cursor: pointer;
@@ -283,7 +276,6 @@ header .menu-icon {
 <body>
 <div class="container">
         <h1>Earncash<h1>
-        
 <div id="registration" class="form-section active">
             <h2>Register</h2>
             <form id="register-form">
