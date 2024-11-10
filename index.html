@@ -297,6 +297,48 @@ footer .copyright {
     margin-top: 40px;
 }
 
+ /* Footer Styles */
+footer {
+    background-color: #212121; /* Dark background */
+    color: white;
+    padding: 30px 0; /* Adjust padding as needed */
+    text-align: center;
+}
+
+footer .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto; /* Center align */
+    padding: 0 20px;
+}
+
+footer .footer-logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+footer .footer-socials {
+    display: flex;
+    gap: 20px; /* Space between icons */
+}
+
+footer .social-icon img {
+    width: 30px; /* Icon size */
+    height: 30px;
+    transition: transform 0.3s ease; /* Hover effect */
+}
+
+footer .social-icon img:hover {
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+footer .footer-copyright {
+    margin-top: 20px;
+    font-size: 14px;
+}
+       
 /* Mobile responsive */
 @media (max-width: 768px) {
     header {
@@ -354,34 +396,7 @@ footer .copyright {
     }
 }
 
-</style>
-    /* Footer */
-footer {
-    background-color: #212121;
-    color: #fff;
-    padding: 40px 0;
-}
-footer a {
-    color: #fff;
-    text-decoration: none;
-}
-footer .content {
-    display: flex;
-    justify-content: space-between;
-    gap: 40px;
-}
-footer .logo {
-    font-size: 28px;
-    font-weight: bold;
-}
-footer .socials img {
-    height: 36px;
-}
-footer .copyright {
-    text-align: center;
-    margin-top: 40px;
-}
-
+    </style>
 </head>
 <body>
 <div class="container">
@@ -421,6 +436,35 @@ footer .copyright {
         <div id="main" class="dashboard">
             <header>
                 <div class="logo">Earncash</div>
+                <!-- Footer Section -->
+<footer>
+    <div class="footer-container">
+        <!-- Logo or Text -->
+        <div class="footer-logo">
+            <span>Earncash</span>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="footer-socials">
+            <a href="https://facebook.com" target="_blank" class="social-icon">
+                <img src="facebook-icon.png" alt="Facebook">
+            </a>
+            <a href="https://twitter.com" target="_blank" class="social-icon">
+                <img src="twitter-icon.png" alt="Twitter">
+            </a>
+            <a href="https://instagram.com" target="_blank" class="social-icon">
+                <img src="instagram-icon.png" alt="Instagram">
+            </a>
+            <a href="https://linkedin.com" target="_blank" class="social-icon">
+                <img src="linkedin-icon.png" alt="LinkedIn">
+            </a>
+        </div>
+    </div>
+    <!-- Copyright Notice -->
+    <div class="footer-copyright">
+        &copy; 2024 Earncash. All Rights Reserved.
+    </div>
+</footer>
                 <div class="user-menu">
                     <div class="menu-icon" onclick="toggleMenu()">≡</div>
                     <div class="dropdown-menu" id="dropdown-menu">
@@ -804,27 +848,5 @@ document.getElementById('about-us-link').addEventListener('click', () => showSec
 // Sample referral tracking (This would be triggered appropriately in real use)
 trackReferral('example@example.com'); // Example call to simulate a referral
     </script>
-      <footer>
-    <div class="content">
-        <div class="logo">Earncash</div>
-        <div class="socials">
-            <a href="https://www.facebook.com" target="_blank">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" />
-            </a>
-            <a href="https://twitter.com" target="_blank">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/Twitter_Logo_2021.svg" alt="Twitter" />
-            </a>
-            <a href="https://www.instagram.com" target="_blank">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2022.svg" alt="Instagram" />
-            </a>
-            <a href="https://www.linkedin.com" target="_blank">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/LinkedIn_Logo_2023.svg" alt="LinkedIn" />
-            </a>
-        </div>
-    </div>
-    <div class="copyright">
-        <p>&copy; 2024 Earncash. All rights reserved.</p>
-    </div>
-      </footer>      
-</body>
+      </body>
 </html>
