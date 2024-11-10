@@ -355,6 +355,33 @@ footer .copyright {
 }
 
 </style>
+    /* Footer */
+footer {
+    background-color: #212121;
+    color: #fff;
+    padding: 40px 0;
+}
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+footer .content {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+footer .logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+footer .socials img {
+    height: 36px;
+}
+footer .copyright {
+    text-align: center;
+    margin-top: 40px;
+}
+
 </head>
 <body>
 <div class="container">
@@ -777,5 +804,27 @@ document.getElementById('about-us-link').addEventListener('click', () => showSec
 // Sample referral tracking (This would be triggered appropriately in real use)
 trackReferral('example@example.com'); // Example call to simulate a referral
     </script>
+      <footer>
+    <div class="content">
+        <div class="logo">Earncash</div>
+        <div class="socials">
+            <a href="https://www.facebook.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" />
+            </a>
+            <a href="https://twitter.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/Twitter_Logo_2021.svg" alt="Twitter" />
+            </a>
+            <a href="https://www.instagram.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2022.svg" alt="Instagram" />
+            </a>
+            <a href="https://www.linkedin.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/LinkedIn_Logo_2023.svg" alt="LinkedIn" />
+            </a>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>&copy; 2024 Earncash. All rights reserved.</p>
+    </div>
+      </footer>      
 </body>
 </html>
