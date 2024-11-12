@@ -7,30 +7,146 @@
 
        <!-- Firebase SDK -->
     <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-      import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-      import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-      
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyD4sNBSwJEDnjlD938YJ9f43-Sv-il-PBE",
-        authDomain: "earncash-9dbb5.firebaseapp.com",
-        projectId: "earncash-9dbb5",
-        storageBucket: "earncash-9dbb5.firebasestorage.app",
-        messagingSenderId: "277935191297",
-        appId: "1:277935191297:web:c59f072773acb70c7d5700",
-        measurementId: "G-0CWQW3MKM5"
-      };
+        // Import the necessary Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-      const storage = getStorage(app);
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD4sNBSwJEDnjlD938YJ9f43-Sv-il-PBE",
+            authDomain: "earncash-9dbb5.firebaseapp.com",
+            projectId: "earncash-9dbb5",
+            storageBucket: "earncash-9dbb5.firebasestorage.app",
+            messagingSenderId: "277935191297",
+            appId: "1:277935191297:web:c59f072773acb70c7d5700",
+            measurementId: "G-0CWQW3MKM5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Sign-up Function
+        const signUp = async (email, password, name) => {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                const refCode = generateReferralCode();  // Generate a unique referral code
+
+                // Store user data in Firestore
+                await addDoc(collection(db, "users"), {
+                    uid: user.uid,
+                    email: email,
+                    name: name,
+                    referralCode: refCode,
+                    balance: 0,  // Start with zero balance
+                    referrals: 0,  // Track number of referrals
+                    totalEarnings: 0,  // Track total earnings
+                    pendingWithdrawals: 0  // Track pending withdrawals
+                });
+
+                console.log("User signed up and stored:", user);
+            } catch (error) {
+                console.error("Error signing up:", error);
+            }
+        };
+
+        // Sign-in Function
+        const signIn = async (email, password) => {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                console.log("User signed in:", user);
+            } catch (error) {
+                console.error("Error signing in:", error);
+            }
+        };
+
+        // Referral Tracking Function: When a new user signs up using a referral code
+        const trackReferral = async (referralCode, uid) => {
+            const q = query(collection(db, "users"), where("referralCode", "==", referralCode));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const referrerDoc = querySnapshot.docs[0];
+                const referrerData = referrerDoc.data();
+                const referrerUid = referrerData.uid;
+
+                // Add referral to referrer
+                await updateDoc(doc(db, "users", referrerDoc.id), {
+                    referrals: referrerData.referrals + 1,
+                    totalEarnings: referrerData.totalEarnings + 5, // Add 5% commission
+                });
+
+                console.log("Referral tracked:", referrerUid);
+            }
+        };
+
+        // Video Viewing: Add earnings after watching a 15-second video
+        const earnFromVideo = async (uid) => {
+            const userRef = doc(db, "users", uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                const newBalance = userData.balance + 0.003; // Earn $0.003 after watching video
+                await updateDoc(userRef, { balance: newBalance });
+                console.log("User earned from video:", newBalance);
+
+                // Check for referral commission (e.g., add 5% to the referrer's balance)
+                if (userData.referrals > 0) {
+                    const referrerRef = doc(db, "users", userData.referrer);
+                    const referrerSnap = await getDoc(referrerRef);
+                    const referrerData = referrerSnap.data();
+                    await updateDoc(referrerRef, { balance: referrerData.balance + 0.05 });  // Add 5% commission
+                }
+            }
+        };
+
+        // Withdrawal Request: Only if balance >= minimum (e.g., $3.00)
+        const requestWithdrawal = async (uid, amount) => {
+            const userRef = doc(db, "users", uid);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+
+            if (userData.balance >= $3.00) {
+                // Save the withdrawal request as pending
+                await updateDoc(userRef, { pendingWithdrawals: userData.pendingWithdrawals + amount });
+                console.log("Withdrawal requested:", amount);
+            } else {
+                console.log("Insufficient balance for withdrawal.");
+            }
+        };
+
+        // Admin Approving Withdrawal
+        const approveWithdrawal = async (uid, amount) => {
+            const userRef = doc(db, "users", uid);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+
+            // Deduct the amount from user's balance and mark as paid
+            await updateDoc(userRef, {
+                balance: userData.balance - amount,
+                pendingWithdrawals: userData.pendingWithdrawals - amount
+            });
+
+            console.log("Withdrawal approved and paid:", amount);
+        };
+
+        // Generate a unique referral code (can be as simple or complex as needed)
+        const generateReferralCode = () => {
+            return Math.random().toString(36).substring(2, 8);  // Generates a random referral code
+        };
+
+        // User state changes listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("User logged in:", user);
+            } else {
+                console.log("No user logged in");
+            }
+        });
+
     </script>
     <style>
       /* Basic styles for visibility and layout */
@@ -86,7 +202,7 @@ body {
         
         /* Dashboard specific text adjustments */
     .dashboard h1, .dashboard h2, .dashboard p {
-        font-size: 16px; /* Set font size to normal for dashboard headings and paragraphs */
+        font-size: 20px; /* Set font size to normal for dashboard headings and paragraphs */
     }
 
     /* Withdrawal section specific font size adjustments */
@@ -446,7 +562,7 @@ footer .copyright {
 
         <div id="withdrawal" class="form-section">
             <h2>Withdrawal</h2>
-            <p>Minimum withdrawal amount is $5.00</p>
+            <p>Minimum withdrawal amount is $3.00</p>
             <input type="number" id="withdrawal-amount" placeholder="Enter amount" min="5.00">
             <select id="withdrawal-method">
                 <option value="TRX">TRX</option>
@@ -672,8 +788,8 @@ function toggleMenu() {
 
 // Watch Video Event Listener
 document.getElementById('watch-video').addEventListener('click', () => {
-    userEarnings += 0.005;
-    currentUser.earnings += 0.005; // Update user's earnings
+    userEarnings += 0.003;
+    currentUser.earnings += 0.003; // Update user's earnings
     document.getElementById('video-earnings').textContent = `$${(currentUser.earnings).toFixed(3)} earned from videos.`;
     document.getElementById('earnings-amount').textContent = `$${(userEarnings).toFixed(3)}`;
 });
@@ -691,9 +807,9 @@ document.getElementById('copy-referral').addEventListener('click', function() {
 // Simulate referral earnings
 function trackReferral(email) {
     if (users[email]) {
-        referralEarnings += 0.005; // Example of referral earning
-        users[email].earnings += 0.005 * 0.05; // 5% referral commission
-        alert(`You earned a referral commission of $${(0.005 * 0.05).toFixed(3)} from ${email}.`);
+        referralEarnings += 0.003; // Example of referral earning
+        users[email].earnings += 0.003 * 0.03; // 5% referral commission
+        alert(`You earned a referral commission of $${(0.003 * 0.03).toFixed(3)} from ${email}.`);
     }
 }
 
@@ -703,8 +819,8 @@ document.getElementById('submit-withdrawal').addEventListener('click', function(
     const method = document.getElementById('withdrawal-method').value;
     const address = document.getElementById('withdrawal-address').value.trim();
 
-    if (amount < 5.00) {
-        alert("Minimum withdrawal amount is $5.00.");
+    if (amount < 3.00) {
+        alert("Minimum withdrawal amount is $3.00.");
         return;
     }
 
