@@ -615,49 +615,201 @@ footer .copyright {
    
       <div id="about-us" class="form-section">
             <h2>About Us</h2>
-            <p>At **EarnCash**, we believe that earning money online should be simple, fun, and rewarding. Our mission is to provide a platform where anyone can earn real money by engaging with ads and referring friends, all while enjoying the process. We understand that people are looking for more flexible ways to make money from the comfort of their homes, and that’s exactly what **EarnCash** offers.
+            <p> **About Us - EarnCash**
 
-Our platform is built around two primary ways you can earn: **watching ads** and **referring friends**. Whether you're a student looking for extra income, a stay-at-home parent, or someone just looking to make some passive earnings, **EarnCash** makes it easy for everyone to participate. Here’s how it works:
-
-#### **Earn by Watching Ads**
-EarnCash partners with advertisers who want to reach a wider audience. By watching ads from trusted brands and companies, you can earn money directly to your account. Each ad you view rewards you with cash that accumulates in your EarnCash wallet. The more ads you watch, the more money you make. It's that simple!
-
-We work with a variety of advertisers across different industries, ensuring there’s something for everyone. From short video ads to interactive display ads, you’ll never run out of opportunities to earn. Plus, our ad content is regularly updated to keep things fresh and engaging.
-
-#### **Earn More by Referring Friends**
-EarnCash takes it a step further with our referral program. When you refer your friends to join EarnCash, you earn a percentage of their earnings — for life! This means that every time your friends watch ads and make money, you do too. It’s the perfect way to boost your income without having to do extra work. The more friends you refer, the more you earn.
-
-We’ve made it super easy to share your referral link via social media, messaging apps, and email. With just a few clicks, your network of friends and family can join the **EarnCash** community, and you can start earning from their activities right away.
-
-#### **Crypto Withdrawals**
-At EarnCash, we understand the growing interest in cryptocurrency, and we’ve made it easier than ever to convert your earnings into crypto. Once you've accumulated enough funds in your EarnCash wallet, you can withdraw your money in various cryptocurrencies like **Bitcoin (BTC)**, **Ethereum (ETH)**, **TRON (TRX)**, and more.
-
-Cryptocurrency provides a fast, secure, and decentralized way to manage your earnings, and we believe in giving our users the flexibility to choose how they receive their money. Whether you’re a crypto enthusiast or simply want to take advantage of digital currencies, **EarnCash** has you covered.
-
-#### **Why Choose EarnCash?**
-- **Simple & User-Friendly**: Our app is designed with simplicity in mind, making it easy to get started. Whether you're new to online earning or an experienced user, you'll find everything you need to start earning in no time.
-  
-- **Earn Anytime, Anywhere**: All you need is an internet connection. Whether you're at home, on the go, or taking a break, you can easily earn by watching ads or referring friends.
-
-- **Get Paid in Crypto**: We offer multiple cryptocurrency withdrawal options, so you can get your earnings in the digital currency of your choice. Enjoy fast and secure payments without the need for traditional banking.
-
-- **Referral Bonuses**: The more you refer, the more you earn. Invite your friends, family, or anyone you know, and get rewarded for every action they take on the app.
-
-- **Transparency**: We value transparency and aim to provide users with a clear breakdown of how much you’re earning and how you can withdraw your funds. No hidden fees, no surprises.
-
-- **Security**: We take your privacy and security seriously. All your personal information and transactions are protected with top-level encryption, so you can focus on earning without worries.
-
-#### **Get Started Today**
-Join the **EarnCash** community today and start making money by watching ads and referring friends. It’s a simple and effective way to earn extra income that can be withdrawn as cryptocurrency. Sign up, watch ads, share your referral link, and start earning now.
-
----
-
-We’re committed to providing a fun and easy way for you to earn. Whether you're looking to make some extra cash or dive into the world of cryptocurrency, **EarnCash** has everything you need to get started.
- </p>
+At EarnCash, we believe in making it easy for you to earn rewards by simply watching ads and referring friends. Our platform offers a straightforward way to earn cash by engaging with content you already see online. Watch ads at your convenience, invite your friends to join, and earn money for every referral. It's a simple, hassle-free way to turn your time into cash. Join EarnCash today and start earning!
+   </p>
             <button id="back-to-main-about">Back to Main</button>
     </div>
 
     <script>
+        // Import Firebase SDK modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyD4sNBSwJEDnjlD938YJ9f43-Sv-il-PBE",
+    authDomain: "earncash-9dbb5.firebaseapp.com",
+    projectId: "earncash-9dbb5",
+    storageBucket: "earncash-9dbb5.firebasestorage.app",
+    messagingSenderId: "277935191297",
+    appId: "1:277935191297:web:c59f072773acb70c7d5700",
+    measurementId: "G-0CWQW3MKM5"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// In-memory user storage (for demo purposes)
+const users = {};
+let currentUser = null;
+let userEarnings = 0;
+let referralEarnings = 0;
+
+// Generate unique user ID
+const generateUniqueUserId = () => {
+    const characters = '0123456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+};
+
+// Sign-up function (with Firebase)
+const signUp = async (email, password, name) => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const refCode = generateReferralCode();
+
+        // Store user data in Firestore
+        await addDoc(collection(db, "users"), {
+            uid: user.uid,
+            email: email,
+            name: name,
+            referralCode: refCode,
+            balance: 0,  // Start with zero balance
+            referrals: 0,  // Track number of referrals
+            totalEarnings: 0,  // Track total earnings
+            pendingWithdrawals: 0  // Track pending withdrawals
+        });
+
+        console.log("User signed up and stored:", user);
+    } catch (error) {
+        console.error("Error signing up:", error);
+    }
+};
+
+// Sign-in function (with Firebase)
+const signIn = async (email, password) => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log("User signed in:", user);
+        currentUser = user;
+        loadUserData(user.uid);  // Load user data after sign-in
+    } catch (error) {
+        console.error("Error signing in:", error);
+    }
+};
+
+// Load user data from Firestore
+const loadUserData = async (uid) => {
+    const q = query(collection(db, "users"), where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        userEarnings = userData.balance;
+        console.log("User data loaded:", userData);
+    } else {
+        console.log("User not found in database.");
+    }
+};
+
+// Referral tracking: when a new user signs up using a referral code
+const trackReferral = async (referralCode, uid) => {
+    const q = query(collection(db, "users"), where("referralCode", "==", referralCode));
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+        const referrerDoc = querySnapshot.docs[0];
+        const referrerData = referrerDoc.data();
+        const referrerUid = referrerData.uid;
+
+        // Add referral to referrer
+        await updateDoc(doc(db, "users", referrerDoc.id), {
+            referrals: referrerData.referrals + 1,
+            totalEarnings: referrerData.totalEarnings + 5, // Add 5% commission
+        });
+
+        console.log("Referral tracked:", referrerUid);
+    }
+};
+
+// Video earnings: add earnings after watching a 15-second video
+const earnFromVideo = async (uid) => {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const newBalance = userData.balance + 1; // Earn 1 unit after watching video
+        await updateDoc(userRef, { balance: newBalance });
+        console.log("User earned from video:", newBalance);
+
+        // Check for referral commission (e.g., add 5% to the referrer's balance)
+        if (userData.referrals > 0) {
+            const referrerRef = doc(db, "users", userData.referrer);
+            const referrerSnap = await getDoc(referrerRef);
+            const referrerData = referrerSnap.data();
+            await updateDoc(referrerRef, { balance: referrerData.balance + 0.05 });  // Add 5% commission
+        }
+    }
+};
+
+// Withdrawal request: only if balance >= minimum (e.g., 10 units)
+const requestWithdrawal = async (uid, amount) => {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+
+    if (userData.balance >= 10) {
+        // Save the withdrawal request as pending
+        await updateDoc(userRef, { pendingWithdrawals: userData.pendingWithdrawals + amount });
+        console.log("Withdrawal requested:", amount);
+    } else {
+        console.log("Insufficient balance for withdrawal.");
+    }
+};
+
+// Admin approving withdrawal
+const approveWithdrawal = async (uid, amount) => {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+
+    // Deduct the amount from user's balance and mark as paid
+    await updateDoc(userRef, {
+        balance: userData.balance - amount,
+        pendingWithdrawals: userData.pendingWithdrawals - amount
+    });
+
+    console.log("Withdrawal approved and paid:", amount);
+};
+
+// Generate a unique referral code (can be as simple or complex as needed)
+const generateReferralCode = () => {
+    return Math.random().toString(36).substring(2, 8);  // Generates a random referral code
+};
+
+// Listen for authentication state changes
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log("User logged in:", user);
+        currentUser = user;
+        loadUserData(user.uid);  // Load user data
+    } else {
+        console.log("No user logged in");
+        currentUser = null;
+    }
+});
+
+// Example: Call to sign up or sign in a user
+// Uncomment to test the functions below
+// signUp('example@example.com', 'password123', 'John Doe');
+// signIn('example@example.com', 'password123');
+
+// Example: Call to simulate earning or withdrawal
+// earnFromVideo('user-id'); // Replace 'user-id' with actual UID
+// requestWithdrawal('user-id', 10); // Replace 'user-id' with actual UID
+// approveWithdrawal('user-id', 10); // Replace 'user-id' with actual UID
+
+
 // User Data Storage (In-memory for demo purposes)
 const users = {};
 let currentUser = null;
