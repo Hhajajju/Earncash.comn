@@ -685,7 +685,7 @@ At EarnCash, we believe in making it easy for you to earn rewards by simply watc
 
     <script>
        
-// User Data Storage (In-memory for demo purposes)
+// User Data Variables (This will be managed by Firebase)
 const users = {};
 let currentUser = null;
 let userEarnings = 0;
@@ -736,7 +736,7 @@ document.getElementById('settings-link').addEventListener('click', () => showSec
 document.getElementById('about-us-link').addEventListener('click', () => showSection('about-us'));
 
 
-// Register Event Listener
+// Register Event Listener using Firebase Authentication
 document.getElementById('register-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const username = this[0].value.trim();
@@ -753,14 +753,31 @@ document.getElementById('register-form').addEventListener('submit', function(e) 
         return;
     }
 
-    // Register User
-    const userId = generateUniqueUserId();
-    users[email] = { username, email, password, earnings: 0, referralLink: generateReferralLink(email), referrals: [], userId };
-    alert("Registration successful! You can now login.");
-    showSection('login');
+     // Register with Firebase Authentication
+    auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+
+            // Store additional user data in Firestore
+            firestore.collection('users').doc(user.uid).set({
+                username: username,
+                email: email,
+                earnings: 0,
+                referralLink: generateReferralLink(username),
+                referrals: []
+            }).then(() => {
+                alert("Registration successful! You can now login.");
+                showSection('login');
+            }).catch((error) => {
+                console.error("Error adding user to Firestore: ", error);
+            });
+        })
+        .catch((error) => {
+            alert(`Error: ${error.message}`);
+        });
 });
 
-// Login Event Listener
+// Login Event Listener using Firebase Authentication
 document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this[0].value.trim();
@@ -820,7 +837,15 @@ document.getElementById('watch-video').addEventListener('click', () => {
     document.getElementById('video-earnings').textContent = `$${(currentUser.earnings).toFixed(3)} earned from videos.`;
     document.getElementById('earnings-amount').textContent = `$${(userEarnings).toFixed(3)}`;
 });
+        
+// Update Firestore with new earnings
+    firestore.collection('users').doc(currentUser.userId).update({
+        earnings: currentUser.earnings
+    });
 
+    document.getElementById('video-earnings').textContent = `$${(currentUser.earnings).toFixed(3)} earned from videos.`;
+    document.getElementById('earnings-amount').textContent = `$${(userEarnings).toFixed(3)}`;
+});
 // Referral Section
 document.getElementById('copy-referral').addEventListener('click', function() {
     const referralLink = currentUser.referralLink;
@@ -858,7 +883,10 @@ document.getElementById('submit-withdrawal').addEventListener('click', function(
 
     // Process withdrawal
     userEarnings -= amount;
-    currentUser.earnings -= amount; // Update user's balance
+    currentUser.earnings -= amount; // Update Firestore with new earnings
+    firestore.collection('users').doc(currentUser.userId).update({
+        earnings: currentUser.earnings
+    });
     document.getElementById('earnings-amount').textContent = `$${(userEarnings).toFixed(3)}`;
 
    // Add to withdrawal history
@@ -907,7 +935,24 @@ function generateReferralLink(username) {
 
 // Initial setup
 showSection('registration');
-
+        
+// Firebase Auth state persistence and auto-login after page refresh
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        firestore.collection('users').doc(user.uid).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    currentUser = doc.data();
+                    userEarnings = currentUser.earnings;
+                    showDashboard();
+                } else {
+                    console.error("User data not found in Firestore.");
+                }
+            });
+    } else {
+        showSection('login');
+    }
+});
 // Menu Section Navigation
 document.getElementById('profile-link').addEventListener('click', () => showSection('profile'));
 document.getElementById('earnings-link').addEventListener('click', () => showSection('earnings-section'));
