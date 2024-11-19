@@ -907,28 +907,8 @@ document.getElementById('settings-form').addEventListener('submit', function(e) 
 // Utility function to generate referral link
 function generateReferralLink(username) {
     return `https://earncash.com/referral?ref=${btoa(username)}`; // Ensure this is a valid URL format
-}
-
-// Initial setup
-showSection('registration');
+  }
         
-// Firebase Auth state persistence and auto-login after page refresh
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        firestore.collection('users').doc(user.uid).get()
-            .then((doc) => {
-                if (doc.exists) {
-                    currentUser = doc.data();
-                    userEarnings = currentUser.earnings;
-                    showDashboard();
-                } else {
-                    console.error("User data not found in Firestore.");
-                }
-            });
-    } else {
-        showSection('login');
-    }
-});
 // Menu Section Navigation
 document.getElementById('profile-link').addEventListener('click', () => showSection('profile'));
 document.getElementById('earnings-link').addEventListener('click', () => showSection('earnings-section'));
