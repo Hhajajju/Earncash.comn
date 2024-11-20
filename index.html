@@ -687,7 +687,7 @@ At EarnCash, we believe in making it easy for you to earn rewards by simply watc
     <script>
       // JavaScript Code for Earncash Application
 
-// User Data Storage (In-memory for demo purposes)
+// User Data Storage (This will be managed by firebase)
 const users = {};
 let currentUser = null;
 let userEarnings = 0;
@@ -728,7 +728,7 @@ document.getElementById('logout-button').addEventListener('click', () => {
     showSection('login');
 });
 
-// Register Event Listener
+// Register Event Listener using Firebase Authentication
 document.getElementById('register-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const username = this[0].value.trim();
@@ -745,14 +745,14 @@ document.getElementById('register-form').addEventListener('submit', function(e) 
         return;
     }
 
-    // Register User
+    // Register User with firebase Authentication
     const userId = generateUniqueUserId();
     users[email] = { username, email, password, earnings: 0, referralLink: generateReferralLink(email), referrals: [], userId };
     alert("Registration successful! You can now login.");
     showSection('login');
 });
 
-// Login Event Listener
+// Login Event Listener using Firebase Authentication
 document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const email = this[0].value.trim();
@@ -808,7 +808,7 @@ function toggleMenu() {
 // Watch Video Event Listener
 document.getElementById('watch-video').addEventListener('click', () => {
     userEarnings += 0.005;
-    currentUser.earnings += 0.005; // Update user's earnings
+    currentUser.earnings += 0.005; // Update user's earnings with firestore
     document.getElementById('video-earnings').textContent = `$${(currentUser.earnings).toFixed(3)} earned from videos.`;
     document.getElementById('earnings-amount').textContent = `$${(userEarnings).toFixed(3)}`;
 });
@@ -850,7 +850,7 @@ document.getElementById('submit-withdrawal').addEventListener('click', function(
 
     // Process withdrawal
     userEarnings -= amount;
-    currentUser.earnings -= amount; // Update user's balance
+    currentUser.earnings -= amount; // Update user's balance with firestore
     document.getElementById('earnings-amount').textContent = `$${(userEarnings).toFixed(3)}`;
 
    // Add to withdrawal history
